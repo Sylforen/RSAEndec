@@ -1,15 +1,12 @@
 import argparse
 from sympy import mod_inverse
 
-# Default strings to be hashed
 stringToBeHashed1 = "ABCDEFG"
 stringToBeHashed2 = "1234567"
 
-# 9th and 10th prime numbers
 prime1 = 23
 prime2 = 29
 
-# RSA parameters
 n = prime1 * prime2
 phi = (prime1 - 1) * (prime2 - 1)
 e = 3
