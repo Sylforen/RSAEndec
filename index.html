@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rsaEncryption</title>
+</head>
+<body>
+    <h1>RSA Encryption</h1>
+    <p>Enter a string to encrypt and decrypt:</p>
+    <input type="text" id="inputString" placeholder="Enter a string">
+    <button onclick="processRSA()">Encrypt & Decrypt</button>
+    <p>Encrypted Data: <span id="encryptedData"></span></p>
+    <p>Decrypted Data: <span id="decryptedData"></span></p>
+
+    <script>
+        const prime1 = 23;
+        const prime2 = 29;
+
+        const n = prime1 * prime2;
+        const phi = (prime1 - 1) * (prime2 - 1);
+        const e = 3;
+
+        function modInverse(a, m) {
+            let m0 = m, t, q;
+            let x0 = 0, x1 = 1;
+
+            if (m === 1) return 0;
+
+            while (a > 1) {
+                q = Math.floor(a / m);
+                t = m;
+                m = a % m;
+                a = t;
+                t = x0;
+                x0 = x1 - q * x0;
+                x1 = t;
+            }
+
+            if (x1 < 0) x1 += m0;
+
+            return x1;
+        }
+
+        const d = modInverse(e, phi);
+
+        function modExp(base, exp, mod) {
+            let result = 1;
+            base = base % mod;
+
+            while (exp > 0) {
+                if (exp % 2 === 1) {
+                    result = (result * base) % mod;
+                }
+                exp = Math.floor(exp / 2);
+                base = (base * base) % mod;
+            }
+
+            return result;
+        }
+
+        function rsaEncrypt(string) {
+            const encryptedList = [];
+            for (let char of string) {
+                const encryptedChar = modExp(char.charCodeAt(0), e, n);
+                encryptedList.push(encryptedChar);
+            }
+            return encryptedList;
+        }
+
+        function rsaDecrypt(encryptedList) {
+            const decryptedList = [];
+            for (let char of encryptedList) {
+                const decryptedChar = modExp(char, d, n);
+                decryptedList.push(String.fromCharCode(decryptedChar));
+            }
+            return decryptedList.join('');
+        }
+
+        function processRSA() {
+            const inputString = document.getElementById('inputString').value;
+
+            
+            const encrypted = rsaEncrypt(inputString);
+            document.getElementById('encryptedData').textContent = encrypted.join(', ');
+
+            const decrypted = rsaDecrypt(encrypted);
+            document.getElementById('decryptedData').textContent = decrypted;
+
+            const url = new URL(window.location);
+            url.searchParams.set('data', inputString);
+            window.history.pushState({}, '', url);
+        }
+
+        function loadFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const data = params.get('data');
+            if (data) {
+                document.getElementById('inputString').value = data;
+
+                const encrypted = rsaEncrypt(data);
+                document.getElementById('encryptedData').textContent = encrypted.join(', ');
+                const decrypted = rsaDecrypt(encrypted);
+                document.getElementById('decryptedData').textContent = decrypted;
+            }
+        }
+
+        window.onload = loadFromURL;
+    </script>
+</body>
+</html>
