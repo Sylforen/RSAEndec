@@ -1,1 +1,1 @@
-RSA Encoder/Decoder embedded inside a HTML file for ENGG15500
+RSAEndec is a novel implementation of RSA encryption and decryption embedded within a standalone HTML file. This tool was created for ENGG1500 to provide client-side cryptographic functionality for a mobile event scheduling application developed in Thunkable.
